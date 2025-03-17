@@ -22,18 +22,18 @@ func main() {
 	}
 
 	command := args[0]
-	//commandArgs := args[1:]
+	commandArgs := args[1:]
 	cmd := commands.NewCommander()
 
 	switch command {
 	case AddCommand:
-		cmd.SetCommand(commands.Add)
+		cmd.SetCommand(commands.Add, commandArgs...)
 	case UpdateCommand:
-		cmd.SetCommand(commands.Update)
+		cmd.SetCommand(commands.Update, commandArgs...)
 	case DeleteCommand:
-		cmd.SetCommand(commands.Delete)
+		cmd.SetCommand(commands.Delete, commandArgs...)
 	case ListCommand:
-		cmd.SetCommand(commands.List)
+		cmd.SetCommand(commands.List, commandArgs...)
 	default:
 		log.Fatalf("unknown command: %s", command)
 	}

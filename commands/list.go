@@ -2,7 +2,7 @@ package commands
 
 import "fmt"
 
-func List() error {
+func List(params ...string) error {
 	fmt.Println("list command")
 	return nil
 }
