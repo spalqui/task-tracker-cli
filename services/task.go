@@ -1,6 +1,8 @@
 package services
 
 import (
+	"fmt"
+
 	"github.com/spalqui/task-tracker-cli/repositories"
 	"github.com/spalqui/task-tracker-cli/types"
 )
@@ -27,48 +29,55 @@ type taskService struct {
 	taskRepository repositories.TaskRepository
 }
 
-func (t taskService) Create(description string) (*types.Task, error) {
-	return &types.Task{
-		ID: 1,
-	}, nil
+func (s *taskService) Create(description string) (*types.Task, error) {
+	task := &types.Task{
+		Description: description,
+	}
+
+	err := s.taskRepository.Add(task)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create task: %w", err)
+	}
+
+	return task, nil
 }
 
-func (t taskService) Update(taskID int, description string) error {
+func (s *taskService) Update(taskID int, description string) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (t taskService) MarkAsDone(taskID int) error {
+func (s *taskService) MarkAsDone(taskID int) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (t taskService) MarkAsInProgress(taskID int) error {
+func (s *taskService) MarkAsInProgress(taskID int) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (t taskService) Delete(taskID int) error {
+func (s *taskService) Delete(taskID int) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (t taskService) List() ([]*types.Task, error) {
+func (s *taskService) List() ([]*types.Task, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (t taskService) ListAllDone() ([]*types.Task, error) {
+func (s *taskService) ListAllDone() ([]*types.Task, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (t taskService) ListAllTodo() ([]*types.Task, error) {
+func (s *taskService) ListAllTodo() ([]*types.Task, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (t taskService) ListAllInProgress() ([]*types.Task, error) {
+func (s *taskService) ListAllInProgress() ([]*types.Task, error) {
 	//TODO implement me
 	panic("implement me")
 }
