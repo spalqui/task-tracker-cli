@@ -19,17 +19,31 @@ func main() {
 	args := os.Args[1:]
 	if len(args) == 0 {
 		log.Fatal("no command provided")
-		return
 	}
 
 	// Setup repositories
-	taskRepository := repositories.NewTaskRepository()
+	taskRepository, err := repositories.NewTaskRepository()
+	if err != nil {
+		log.Fatalf("failed to create task repository: %s", err)
+	}
 
 	// Setup services
-	_ = services.NewTaskService(taskRepository)
+	taskService := services.NewTaskService(taskRepository)
 
-	//command := args[0]
-	//commandArgs := args[1:]
+	command := args[0]
+	commandArgs := args[1:]
+
+	if command == AddCommand {
+		description := commandArgs[0]
+
+		task, err := taskService.Create(description)
+		if err != nil {
+			log.Fatalf("failed to create task: %s", err)
+		}
+
+		log.Printf("Task added successfully (ID: %d)", task.ID)
+	}
+
 	//
 	//switch command {
 	//case AddCommand:
