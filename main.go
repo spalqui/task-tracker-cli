@@ -4,7 +4,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/spalqui/task-tracker-cli/commands"
+	"github.com/spalqui/task-tracker-cli/repositories"
+	"github.com/spalqui/task-tracker-cli/services"
 )
 
 const (
@@ -21,25 +22,31 @@ func main() {
 		return
 	}
 
-	command := args[0]
-	commandArgs := args[1:]
-	cmd := commands.NewCommander()
+	// Setup repositories
+	taskRepository := repositories.NewTaskRepository()
 
-	switch command {
-	case AddCommand:
-		cmd.SetCommand(commands.Add, commandArgs...)
-	case UpdateCommand:
-		cmd.SetCommand(commands.Update, commandArgs...)
-	case DeleteCommand:
-		cmd.SetCommand(commands.Delete, commandArgs...)
-	case ListCommand:
-		cmd.SetCommand(commands.List, commandArgs...)
-	default:
-		log.Fatalf("unknown command: %s", command)
-	}
+	// Setup services
+	_ = services.NewTaskService(taskRepository)
 
-	err := cmd.Execute()
-	if err != nil {
-		log.Fatalf("command failed: %s err: %s", command, err)
-	}
+	//command := args[0]
+	//commandArgs := args[1:]
+	//
+	//switch command {
+	//case AddCommand:
+	//
+	//
+	//case UpdateCommand:
+	//	cmd.SetCommand(commands.Update, commandArgs...)
+	//case DeleteCommand:
+	//	cmd.SetCommand(commands.Delete, commandArgs...)
+	//case ListCommand:
+	//	cmd.SetCommand(commands.List, commandArgs...)
+	//default:
+	//	log.Fatalf("unknown command: %s", command)
+	//}
+	//
+	//err := cmd.Execute()
+	//if err != nil {
+	//	log.Fatalf("command failed: %s err: %s", command, err)
+	//}
 }
