@@ -21,6 +21,8 @@ func main() {
 		log.Fatal("no command provided")
 	}
 
+	var err error
+
 	// Setup repositories
 	taskRepository, err := repositories.NewTaskRepository()
 	if err != nil {
@@ -31,9 +33,17 @@ func main() {
 	taskService := services.NewTaskService(taskRepository)
 
 	command := args[0]
-	commandArgs := args[1:]
+	commandArgs := make([]string, 0)
+	if len(args) > 1 {
+		commandArgs = args[1:]
+	}
 
-	if command == AddCommand {
+	switch command {
+	case AddCommand:
+		if len(commandArgs) == 0 {
+			log.Fatalf("no arguments provided")
+		}
+
 		description := commandArgs[0]
 
 		task, err := taskService.Create(description)
@@ -41,26 +51,21 @@ func main() {
 			log.Fatalf("failed to create task: %s", err)
 		}
 
-		log.Printf("Task added successfully (ID: %d)", task.ID)
+		log.Printf("task added successfully (ID: %d)", task.ID)
+	case UpdateCommand:
+		log.Fatalf("not yet implemented")
+	case DeleteCommand:
+		log.Fatalf("not yet implemented")
+	case ListCommand:
+		log.Fatalf("not yet implemented")
+	default:
+		log.Fatalf("unknown command: %s", command)
 	}
+}
 
-	//
-	//switch command {
-	//case AddCommand:
-	//
-	//
-	//case UpdateCommand:
-	//	cmd.SetCommand(commands.Update, commandArgs...)
-	//case DeleteCommand:
-	//	cmd.SetCommand(commands.Delete, commandArgs...)
-	//case ListCommand:
-	//	cmd.SetCommand(commands.List, commandArgs...)
-	//default:
-	//	log.Fatalf("unknown command: %s", command)
-	//}
-	//
-	//err := cmd.Execute()
-	//if err != nil {
-	//	log.Fatalf("command failed: %s err: %s", command, err)
-	//}
+func getArgs(args []string) []string {
+	if len(args) == 0 {
+		return nil
+	}
+	return args[1:]
 }

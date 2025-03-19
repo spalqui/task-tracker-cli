@@ -5,6 +5,7 @@ import (
 
 	"github.com/spalqui/task-tracker-cli/repositories"
 	"github.com/spalqui/task-tracker-cli/types"
+	"github.com/spalqui/task-tracker-cli/validator"
 )
 
 type TaskService interface {
@@ -32,6 +33,13 @@ type taskService struct {
 func (s *taskService) Create(description string) (*types.Task, error) {
 	task := &types.Task{
 		Description: description,
+	}
+
+	v := validator.New()
+	v.Check(description != "", "description", "is empty")
+
+	if !v.IsValid() {
+		return nil, fmt.Errorf("failed to create task due to validation errors: %v", v.Errors)
 	}
 
 	err := s.taskRepository.Add(task)
