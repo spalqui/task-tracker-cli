@@ -75,8 +75,30 @@ func (r *taskRepository) Add(task *types.Task) error {
 }
 
 func (r *taskRepository) Update(task *types.Task) error {
-	//TODO implement me
-	panic("implement me")
+	tasks, err := r.readTasks()
+	if err != nil {
+		return fmt.Errorf("failed to update task: %w", err)
+	}
+
+	found := false
+	for i := range tasks {
+		if tasks[i].ID == task.ID {
+			tasks[i].UpdatedAt = time.Now()
+			tasks[i].Description = task.Description
+			found = true
+
+			err = r.writeTasks(tasks)
+		}
+	}
+	if err != nil {
+		return fmt.Errorf("failed to update task: %w", err)
+	}
+
+	if !found {
+		return fmt.Errorf("failed to find task with ID %v", task.ID)
+	}
+
+	return nil
 }
 
 func (r *taskRepository) Delete(taskID int) error {

@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/spalqui/task-tracker-cli/repositories"
 	"github.com/spalqui/task-tracker-cli/services"
@@ -53,7 +54,25 @@ func main() {
 
 		log.Printf("task added successfully (ID: %d)", task.ID)
 	case UpdateCommand:
-		log.Fatalf("not yet implemented")
+		if len(commandArgs) < 2 {
+			log.Fatalf("not enough arguments provided (id, description)")
+		}
+
+		taskIDValue := commandArgs[0]
+		description := commandArgs[1]
+
+		taskID, err := strconv.Atoi(taskIDValue)
+		if err != nil {
+			log.Fatalf("failed to parse task ID: %s", err)
+		}
+
+		err = taskService.Update(taskID, description)
+		if err != nil {
+			log.Fatalf("failed to update task: %s", err)
+		}
+
+		log.Printf("task updated successfully (ID: %d)", taskID)
+
 	case DeleteCommand:
 		log.Fatalf("not yet implemented")
 	case ListCommand:

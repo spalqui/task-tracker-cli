@@ -51,8 +51,26 @@ func (s *taskService) Create(description string) (*types.Task, error) {
 }
 
 func (s *taskService) Update(taskID int, description string) error {
-	//TODO implement me
-	panic("implement me")
+	v := validator.New()
+
+	v.Check(taskID > 0, "ID", "is zero or empty")
+	v.Check(description != "", "description", "is empty")
+
+	if !v.IsValid() {
+		return fmt.Errorf("failed to update task due to validation errors: %v", v.Errors)
+	}
+
+	task := types.Task{
+		ID:          taskID,
+		Description: description,
+	}
+
+	err := s.taskRepository.Update(&task)
+	if err != nil {
+		return fmt.Errorf("failed to update task: %w", err)
+	}
+
+	return nil
 }
 
 func (s *taskService) MarkAsDone(taskID int) error {
