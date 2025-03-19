@@ -40,8 +40,8 @@ func main() {
 
 	switch command {
 	case AddCommand:
-		if len(commandArgs) == 0 {
-			log.Fatalf("no arguments provided")
+		if len(commandArgs) < 1 {
+			log.Fatalf("not enough arguments provided (description)")
 		}
 
 		description := commandArgs[0]
