@@ -12,10 +12,12 @@ import (
 )
 
 const (
-	AddCommand    = "add"
-	UpdateCommand = "update"
-	DeleteCommand = "delete"
-	ListCommand   = "list"
+	AddCommand     = "add"
+	UpdateCommand  = "update"
+	MarkInProgress = "mark-in-progress"
+	MarkDone       = "mark-done"
+	DeleteCommand  = "delete"
+	ListCommand    = "list"
 )
 
 func main() {

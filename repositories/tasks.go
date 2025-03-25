@@ -85,6 +85,7 @@ func (r *taskRepository) Update(task *types.Task) error {
 		if tasks[i].ID == task.ID {
 			tasks[i].UpdatedAt = time.Now()
 			tasks[i].Description = task.Description
+			tasks[i].Status = task.Status
 			found = true
 
 			err = r.writeTasks(tasks)
