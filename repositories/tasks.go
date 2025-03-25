@@ -60,7 +60,7 @@ func (r *taskRepository) Add(task *types.Task) error {
 	timeNow := time.Now()
 
 	task.ID = lastID + 1
-	task.Status = "TODO"
+	task.Status = types.TaskStatusTODO
 	task.CreatedAt = timeNow
 	task.UpdatedAt = timeNow
 
