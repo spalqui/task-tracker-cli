@@ -25,3 +25,13 @@ func (v *Validator) Check(ok bool, key, message string) {
 		v.AddError(key, message)
 	}
 }
+
+func (v *Validator) In(value string, list ...string) bool {
+	for i := range list {
+		if list[i] == value {
+			return true
+		}
+	}
+
+	return false
+}

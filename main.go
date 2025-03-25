@@ -1,12 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strconv"
 
 	"github.com/spalqui/task-tracker-cli/repositories"
 	"github.com/spalqui/task-tracker-cli/services"
+	"github.com/spalqui/task-tracker-cli/types"
 )
 
 const (
@@ -74,9 +76,54 @@ func main() {
 		log.Printf("task updated successfully (ID: %d)", taskID)
 
 	case DeleteCommand:
-		log.Fatalf("not yet implemented")
+		if len(commandArgs) < 1 {
+			log.Fatalf("not enough arguments provided (id)")
+		}
+
+		taskIDValue := commandArgs[0]
+
+		taskID, err := strconv.Atoi(taskIDValue)
+		if err != nil {
+			log.Fatalf("failed to parse task ID: %s", err)
+		}
+
+		err = taskService.Delete(taskID)
+		if err != nil {
+			log.Fatalf("failed to delete task: %s", err)
+		}
+
+		log.Print("task deleted successfully")
+
 	case ListCommand:
-		log.Fatalf("not yet implemented")
+		if len(commandArgs) > 1 {
+			log.Fatalf("too many arguments provided (status [todo, done, in-progress])")
+		}
+
+		status := ""
+		if len(commandArgs) == 1 {
+			status = commandArgs[0]
+		}
+
+		tasks, err := taskService.List(status)
+		if err != nil {
+			log.Fatalf("failed to list tasks: %s", err)
+		}
+
+		title := "all tasks"
+		switch status {
+		case types.TaskStatusTodo:
+			title = "all todo tasks"
+		case types.TaskStatusInProgress:
+			title = "all in-progress tasks"
+		case types.TaskStatusDone:
+			title = "all done tasks"
+		}
+		title = fmt.Sprintf("%s (%d)", title, len(tasks))
+
+		log.Println(title)
+		for _, task := range tasks {
+			log.Printf("%d\t%s\t%s\t%s\t%s", task.ID, task.Description, task.Status, task.CreatedAt, task.UpdatedAt)
+		}
 	default:
 		log.Fatalf("unknown command: %s", command)
 	}

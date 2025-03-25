@@ -43,6 +43,28 @@ func TestValidator_AddError(t *testing.T) {
 	}
 }
 
+func TestValidator_In(t *testing.T) {
+	tests := []struct {
+		name  string
+		value string
+		list  []string
+		want  bool
+	}{
+		{"value in list", "apple", []string{"apple", "banana", "cherry"}, true},
+		{"value not in list", "grape", []string{"apple", "banana", "cherry"}, false},
+		{"empty list", "apple", []string{}, false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			v := New()
+			if got := v.In(tt.value, tt.list...); got != tt.want {
+				t.Errorf("Validator.In() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func equal(a, b map[string]string) bool {
 	if len(a) != len(b) {
 		return false

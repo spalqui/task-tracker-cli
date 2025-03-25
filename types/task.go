@@ -5,13 +5,13 @@ import "time"
 type Task struct {
 	ID          int
 	Description string
-	Status      int
+	Status      string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
 
 const (
-	TaskStatusTODO = iota
-	TaskStatusInProgress
-	TaskStatusDone
+	TaskStatusTodo       = "todo"
+	TaskStatusInProgress = "in-progress"
+	TaskStatusDone       = "done"
 )

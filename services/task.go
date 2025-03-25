@@ -14,10 +14,7 @@ type TaskService interface {
 	MarkAsDone(taskID int) error
 	MarkAsInProgress(taskID int) error
 	Delete(taskID int) error
-	List() ([]*types.Task, error)
-	ListAllDone() ([]*types.Task, error)
-	ListAllTodo() ([]*types.Task, error)
-	ListAllInProgress() ([]*types.Task, error)
+	List(status string) ([]*types.Task, error)
 }
 
 func NewTaskService(taskRepository repositories.TaskRepository) TaskService {
@@ -79,18 +76,42 @@ func (s *taskService) MarkAsDone(taskID int) error {
 }
 
 func (s *taskService) MarkAsInProgress(taskID int) error {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
 func (s *taskService) Delete(taskID int) error {
-	//TODO implement me
-	panic("implement me")
+	v := validator.New()
+
+	v.Check(taskID > 0, "ID", "is zero or empty")
+
+	if !v.IsValid() {
+		return fmt.Errorf("failed to delete task due to validation errors: %v", v.Errors)
+	}
+
+	err := s.taskRepository.Delete(taskID)
+	if err != nil {
+		return fmt.Errorf("failed to delete task: %w", err)
+	}
+
+	return nil
 }
 
-func (s *taskService) List() ([]*types.Task, error) {
-	//TODO implement me
-	panic("implement me")
+func (s *taskService) List(status string) ([]*types.Task, error) {
+	if status != "" {
+		v := validator.New()
+
+		if !v.In(status, types.TaskStatusTodo, types.TaskStatusInProgress, types.TaskStatusDone) {
+			return nil, fmt.Errorf("failed to list tasks invalid task status: %s", status)
+		}
+	}
+
+	tasks, err := s.taskRepository.List(status)
+	if err != nil {
+		return nil, fmt.Errorf("failed to list tasks: %w", err)
+	}
+
+	return tasks, nil
 }
 
 func (s *taskService) ListAllDone() ([]*types.Task, error) {
