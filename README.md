@@ -1,6 +1,6 @@
 # TaskTracker CLI
 TaskTracker CLI is a simple but yet effective way to manage tasks in the current working directory. It will persist the tasks
-in a JSON file named `tasks.json`.
+in a JSON file named `tasks.json`. Currently only `todo`, `in-progress` and `done` status are supported.
 
 ## Usage
 
@@ -12,6 +12,16 @@ Add a new task.
 Update a task.
 ```bash
 ./task-cli update 1 "buy milk x2"
+```
+
+Mark a task as in-progress.
+```bash
+./task-cli mark-in-progress 1
+```
+
+Mark a task as done.
+```bash
+./task-cli mark-done 1
 ```
 
 List all tasks.
