@@ -11,7 +11,7 @@ Add a new task.
 
 Update a task.
 ```bash
-./task-cli update 1 "buy milk"
+./task-cli update 1 "buy milk x2"
 ```
 
 List all tasks.

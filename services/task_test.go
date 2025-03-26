@@ -29,14 +29,14 @@ func TestTaskService_Create(t *testing.T) {
 			description: "",
 			addFunc:     nil,
 			wantErr:     true,
-			errMsg:      "failed to create task due to validation errors: map[description:is empty]",
+			errMsg:      fmt.Sprintf(ErrCreateTask, "map[description:is empty]"),
 		},
 		{
 			name:        "repository failure",
 			description: "Test task",
 			addFunc:     func(task *types.Task) error { return errors.New("repository error") },
 			wantErr:     true,
-			errMsg:      "failed to create task",
+			errMsg:      fmt.Sprintf(ErrCreateTask, "repository error"),
 		},
 	}
 
@@ -93,7 +93,7 @@ func TestTaskService_Update(t *testing.T) {
 			description: "buy milk",
 			updateFunc:  nil,
 			wantErr:     true,
-			errMsg:      "failed to update task due to validation errors: map[ID:is zero or empty]",
+			errMsg:      fmt.Sprintf(ErrUpdateTask, "map[ID:is zero or empty]"),
 		},
 		{
 			name:        "validation failure - description is empty",
@@ -101,7 +101,7 @@ func TestTaskService_Update(t *testing.T) {
 			description: "",
 			updateFunc:  nil,
 			wantErr:     true,
-			errMsg:      "failed to update task due to validation errors: map[description:is empty]",
+			errMsg:      fmt.Sprintf(ErrUpdateTask, "map[description:is empty]"),
 		},
 		{
 			name:        "repository failure",
@@ -109,7 +109,7 @@ func TestTaskService_Update(t *testing.T) {
 			description: "Updated task",
 			updateFunc:  func(task *types.Task) error { return errors.New("repository error") },
 			wantErr:     true,
-			errMsg:      "failed to update task",
+			errMsg:      fmt.Sprintf(ErrUpdateTask, "repository error"),
 		},
 		{
 			name:        "task not found",
@@ -164,14 +164,14 @@ func TestTaskService_Delete(t *testing.T) {
 			taskID:     0,
 			deleteFunc: nil,
 			wantErr:    true,
-			errMsg:     "failed to delete task due to validation errors: map[ID:is zero or empty]",
+			errMsg:     fmt.Sprintf(ErrDeleteTask, "map[ID:is zero or empty]"),
 		},
 		{
 			name:       "repository failure",
 			taskID:     1,
 			deleteFunc: func(taskID int) error { return errors.New("repository error") },
 			wantErr:    true,
-			errMsg:     "failed to delete task",
+			errMsg:     fmt.Sprintf(ErrDeleteTask, "repository error"),
 		},
 		{
 			name:       "task not found",
@@ -237,7 +237,7 @@ func TestTaskService_List(t *testing.T) {
 				return nil, errors.New("repository error")
 			},
 			wantErr: true,
-			errMsg:  "failed to list tasks",
+			errMsg:  fmt.Sprintf(ErrListTasks, "repository error"),
 		},
 		{
 			name:   "unsupported status",
@@ -246,7 +246,7 @@ func TestTaskService_List(t *testing.T) {
 				return nil, fmt.Errorf("failed to list tasks invalid task status: %s", status)
 			},
 			wantErr: true,
-			errMsg:  "failed to list tasks invalid task status: unsupported",
+			errMsg:  fmt.Sprintf(ErrListTasks, "unsupported"),
 		},
 	}
 

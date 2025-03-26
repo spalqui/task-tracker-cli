@@ -45,60 +45,91 @@ func main() {
 
 	switch command {
 	case AddCommand:
-		if len(commandArgs) < 1 {
-			log.Fatalf("not enough arguments provided (description)")
+		if len(commandArgs) != 1 {
+			log.Fatal("invalid number arguments provided (description)")
 		}
 
 		description := commandArgs[0]
 
 		task, err := taskService.Create(description)
 		if err != nil {
-			log.Fatalf("failed to create task: %s", err)
+			log.Fatal(err)
 		}
 
 		log.Printf("task added successfully (ID: %d)", task.ID)
 	case UpdateCommand:
-		if len(commandArgs) < 2 {
-			log.Fatalf("not enough arguments provided (id, description)")
+		if len(commandArgs) != 2 {
+			log.Fatal("invalid number arguments provided (id, description)")
 		}
 
-		taskIDValue := commandArgs[0]
-		description := commandArgs[1]
-
-		taskID, err := strconv.Atoi(taskIDValue)
+		taskID, err := getTaskID(commandArgs[0])
 		if err != nil {
-			log.Fatalf("failed to parse task ID: %s", err)
+			log.Fatal(err)
 		}
+
+		description := commandArgs[1]
 
 		err = taskService.Update(taskID, description)
 		if err != nil {
-			log.Fatalf("failed to update task: %s", err)
+			log.Fatal(err)
 		}
 
 		log.Printf("task updated successfully (ID: %d)", taskID)
 
-	case DeleteCommand:
-		if len(commandArgs) < 1 {
-			log.Fatalf("not enough arguments provided (id)")
+	case MarkInProgress:
+		if len(commandArgs) != 1 {
+			log.Fatal("invalid number arguments provided (id)")
 		}
 
-		taskIDValue := commandArgs[0]
-
-		taskID, err := strconv.Atoi(taskIDValue)
+		taskID, err := getTaskID(commandArgs[0])
 		if err != nil {
-			log.Fatalf("failed to parse task ID: %s", err)
+			log.Fatal(err)
+		}
+
+		err = taskService.MarkAsInProgress(taskID)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		log.Print("task marked in-progress successfully")
+
+	case MarkDone:
+		if len(commandArgs) != 1 {
+			log.Fatal("invalid number arguments provided (id)")
+		}
+
+		taskID, err := getTaskID(commandArgs[0])
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		err = taskService.MarkAsDone(taskID)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		log.Print("task marked as done successfully")
+
+	case DeleteCommand:
+		if len(commandArgs) != 1 {
+			log.Fatal("invalid number arguments provided (id)")
+		}
+
+		taskID, err := getTaskID(commandArgs[0])
+		if err != nil {
+			log.Fatal(err)
 		}
 
 		err = taskService.Delete(taskID)
 		if err != nil {
-			log.Fatalf("failed to delete task: %s", err)
+			log.Fatal(err)
 		}
 
 		log.Print("task deleted successfully")
 
 	case ListCommand:
 		if len(commandArgs) > 1 {
-			log.Fatalf("too many arguments provided (status [todo, done, in-progress])")
+			log.Fatal("invalid number arguments provided (status [todo, done, in-progress] or not argument for all)")
 		}
 
 		status := ""
@@ -131,9 +162,11 @@ func main() {
 	}
 }
 
-func getArgs(args []string) []string {
-	if len(args) == 0 {
-		return nil
+func getTaskID(v string) (int, error) {
+	ID, err := strconv.Atoi(v)
+	if err != nil {
+		return 0, fmt.Errorf("error parsing ID(%s): %w", v, err)
 	}
-	return args[1:]
+
+	return ID, nil
 }

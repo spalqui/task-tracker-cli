@@ -14,6 +14,7 @@ import (
 const fileName = "tasks.json"
 
 type TaskRepository interface {
+	GetByID(taskID int) (*types.Task, error)
 	Add(task *types.Task) error
 	Update(task *types.Task) error
 	Delete(taskID int) error
@@ -48,6 +49,21 @@ func NewTaskRepository() (TaskRepository, error) {
 	return &taskRepository{
 		filePath: filePath,
 	}, nil
+}
+
+func (r *taskRepository) GetByID(taskID int) (*types.Task, error) {
+	tasks, err := r.readTasks()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get task (ID:%d): %w", taskID, err)
+	}
+
+	for _, task := range tasks {
+		if task.ID == taskID {
+			return task, nil
+		}
+	}
+
+	return nil, fmt.Errorf("task (ID:%d) not found", taskID)
 }
 
 func (r *taskRepository) Add(task *types.Task) error {
