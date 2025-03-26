@@ -39,5 +39,5 @@ Delete a task.
 ./task-cli delete 1
 ```
 
-### TODOs
-- Implement the command pattern for better extensibility when adding new commands in the future.
+### Bugs
+- Duplicate IDs
