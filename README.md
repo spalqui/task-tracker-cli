@@ -48,6 +48,3 @@ Delete a task.
 ```bash
 ./task-cli delete 1
 ```
-
-### Bugs
-- Duplicate IDs

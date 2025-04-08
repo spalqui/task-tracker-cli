@@ -24,6 +24,7 @@ type TaskRepository interface {
 type taskRepository struct {
 	mu       sync.Mutex
 	filePath string
+	lastID   int
 }
 
 func NewTaskRepository() (TaskRepository, error) {
@@ -33,7 +34,9 @@ func NewTaskRepository() (TaskRepository, error) {
 	}
 
 	filePath := filepath.Join(dir, fileName)
+	lastID := 0
 
+	// Check if the file exists otherwise create it
 	_, err = os.Stat(filePath)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -41,14 +44,31 @@ func NewTaskRepository() (TaskRepository, error) {
 			if err != nil {
 				return nil, fmt.Errorf("failed to create %s file: %w", fileName, err)
 			}
-		} else {
-			return nil, fmt.Errorf("failed to read %s file: %w", fileName, err)
+			return &taskRepository{
+				filePath: filePath,
+				lastID:   lastID,
+			}, nil
+		}
+		return nil, fmt.Errorf("failed to read %s file: %w", fileName, err)
+	}
+
+	repo := taskRepository{
+		filePath: filePath,
+	}
+
+	// Read tasks and determine the last ID
+	tasks, err := repo.readTasks()
+	if err != nil {
+		return nil, fmt.Errorf("failed to read %s file: %w", fileName, err)
+	}
+
+	for _, task := range tasks {
+		if task.ID > repo.lastID {
+			repo.lastID = task.ID
 		}
 	}
 
-	return &taskRepository{
-		filePath: filePath,
-	}, nil
+	return &repo, nil
 }
 
 func (r *taskRepository) GetByID(taskID int) (*types.Task, error) {
@@ -72,10 +92,9 @@ func (r *taskRepository) Add(task *types.Task) error {
 		return fmt.Errorf("failed to add task: %w", err)
 	}
 
-	lastID := len(tasks)
 	timeNow := time.Now()
 
-	task.ID = lastID + 1
+	task.ID = r.lastID + 1
 	task.Status = types.TaskStatusTodo
 	task.CreatedAt = timeNow
 	task.UpdatedAt = timeNow
